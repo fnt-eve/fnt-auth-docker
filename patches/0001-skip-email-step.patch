@@ -1,0 +1,16 @@
+--- authentication/views.py	2023-02-01 21:29:35.782416923 +0300
++++ authentication/views.py	2023-02-01 21:29:58.382417344 +0300
+@@ -164,10 +164,10 @@
+             login(request, user)
+             return redirect(request.POST.get('next', request.GET.get('next', 'authentication:dashboard')))
+         elif not user.email:
+-            # Store the new user PK in the session to enable us to identify the registering user in Step 2
+-            request.session['registration_uid'] = user.pk
+-            # Go to Step 2
+-            return redirect('registration_register')
++            user.save()
++            user.is_active = True
++            login(request, user, 'allianceauth.authentication.backends.StateBackend')
++            return redirect("authentication:dashboard")
+     messages.error(request, _('Unable to authenticate as the selected character.'))
+     return redirect(settings.LOGIN_URL)

@@ -1,5 +1,5 @@
 FROM python:3.10-slim
-ARG AA_VERSION
+ARG AA_VERSION=3.3.0
 ENV VIRTUAL_ENV=/opt/venv
 ENV AUTH_USER=allianceserver
 ENV AUTH_GROUP=allianceserver
@@ -22,6 +22,11 @@ RUN mkdir -p ${VIRTUAL_ENV} \
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     libmariadb-dev gcc supervisor git htop
 
+# Copy migrate script
+COPY migrate.sh $AUTH_HOME
+RUN chown ${AUTH_USERGROUP} $AUTH_HOME/migrate.sh
+RUN chmod u+x $AUTH_HOME/migrate.sh
+
 # Switch to non-root user
 USER ${AUTH_USER}
 RUN python3 -m venv $VIRTUAL_ENV
@@ -31,7 +36,11 @@ WORKDIR ${AUTH_HOME}
 # Install python dependencies
 RUN pip install --upgrade pip
 RUN pip install wheel gunicorn
-RUN [[ -z "${AA_VERSION}" ]] && pip install allianceauth || pip install allianceauth==${AA_VERSION}
+RUN pip install allianceauth==${AA_VERSION}
+ENV AA_PACKAGE_PATH="$VIRTUAL_ENV/lib/python3.10/site-packages/allianceauth/"
+
+COPY patches ${AUTH_HOME}
+RUN cat 0001-skip-email-step.patch | patch -d $AA_PACKAGE_PATH/authentication
 
 # Initialize auth
 RUN allianceauth start myauth
@@ -41,7 +50,9 @@ RUN mkdir -p ${STATIC_BASE}/myauth/static
 COPY /conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN echo 'alias auth="python $AUTH_HOME/myauth/manage.py"' >> ~/.bashrc && \
     echo 'alias supervisord="supervisord -c /etc/supervisor/conf.d/supervisord.conf"' >> ~/.bashrc && \
+    echo "source ${VIRTUAL_ENV}/bin/activate" >> ~/.bashrc && \
     source ~/.bashrc
+
 
 WORKDIR /home/allianceserver/myauth
 EXPOSE 8000
