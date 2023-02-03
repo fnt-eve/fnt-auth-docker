@@ -8,8 +8,8 @@
 -            request.session['registration_uid'] = user.pk
 -            # Go to Step 2
 -            return redirect('registration_register')
-+            user.save()
 +            user.is_active = True
++            user.save()
 +            login(request, user, 'allianceauth.authentication.backends.StateBackend')
 +            return redirect("authentication:dashboard")
      messages.error(request, _('Unable to authenticate as the selected character.'))
