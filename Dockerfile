@@ -40,7 +40,7 @@ RUN pip install allianceauth==${AA_VERSION}
 ENV AA_PACKAGE_PATH="$VIRTUAL_ENV/lib/python3.10/site-packages/allianceauth/"
 
 COPY patches ${AUTH_HOME}
-#RUN cat 0001-skip-email-step.patch | patch -d $AA_PACKAGE_PATH/authentication
+RUN cat 0001-skip-email-step.patch | patch -d $AA_PACKAGE_PATH/authentication
 
 # Initialize auth
 RUN allianceauth start myauth
