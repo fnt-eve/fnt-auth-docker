@@ -1,6 +1,6 @@
 --- authentication/views.py	2023-02-01 21:29:35.782416923 +0300
 +++ authentication/views.py	2023-02-01 21:29:58.382417344 +0300
-@@ -164,10 +164,10 @@
+@@ -164,10 +164,11 @@
              login(request, user)
              return redirect(request.POST.get('next', request.GET.get('next', 'authentication:dashboard')))
          elif not user.email:
@@ -9,6 +9,7 @@
 -            # Go to Step 2
 -            return redirect('registration_register')
 +            user.is_active = True
++            user.email = "fake-email@fnt.services"
 +            user.save()
 +            login(request, user, 'allianceauth.authentication.backends.StateBackend')
 +            return redirect("authentication:dashboard")
