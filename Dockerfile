@@ -39,6 +39,10 @@ RUN pip install wheel gunicorn
 RUN pip install allianceauth==${AA_VERSION}
 ENV AA_PACKAGE_PATH="$VIRTUAL_ENV/lib/python3.10/site-packages/allianceauth/"
 
+# Install AA extension apps
+RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings allianceauth-securegroups aa-esi-status fittings
+RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
+
 COPY patches ${AUTH_HOME}
 RUN cat 0001-skip-email-step.patch | patch -d $AA_PACKAGE_PATH/authentication
 
