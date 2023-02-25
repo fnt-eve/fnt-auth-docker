@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 ARG AA_VERSION=3.3.0
 ENV VIRTUAL_ENV=/opt/venv
 ENV AUTH_USER=allianceserver
