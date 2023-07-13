@@ -20,7 +20,7 @@ RUN mkdir -p ${VIRTUAL_ENV} \
 
 # Install build dependencies
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
-    libmariadb-dev gcc supervisor git htop
+    libmariadb-dev gcc supervisor git htop pkg-config
 
 # Copy migrate script
 COPY migrate.sh $AUTH_HOME
