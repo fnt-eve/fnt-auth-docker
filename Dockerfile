@@ -1,5 +1,5 @@
 FROM python:3.10-slim
-ARG AA_VERSION=3.5.1
+ARG AA_VERSION=3.7.1
 ENV VIRTUAL_ENV=/opt/venv
 ENV AUTH_USER=allianceserver
 ENV AUTH_GROUP=allianceserver
