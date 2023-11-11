@@ -1,6 +1,8 @@
---- authentication/views.py	2023-02-01 21:29:35.782416923 +0300
-+++ authentication/views.py	2023-02-01 21:29:58.382417344 +0300
-@@ -164,10 +164,11 @@
+diff --git a/allianceauth/authentication/views.py b/allianceauth/authentication/views.py
+index 15c746c7..5cde8a79 100644
+--- a/allianceauth/authentication/views.py
++++ b/allianceauth/authentication/views.py
+@@ -167,10 +167,11 @@ def sso_login(request, token):
              login(request, user)
              return redirect(request.POST.get('next', request.GET.get('next', 'authentication:dashboard')))
          elif not user.email:

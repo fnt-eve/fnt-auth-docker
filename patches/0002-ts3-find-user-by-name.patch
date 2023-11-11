@@ -1,0 +1,20 @@
+diff --git a/allianceauth/services/modules/teamspeak3/manager.py b/allianceauth/services/modules/teamspeak3/manager.py
+index 519a8a47..d094b098 100644
+--- a/allianceauth/services/modules/teamspeak3/manager.py
++++ b/allianceauth/services/modules/teamspeak3/manager.py
+@@ -61,6 +61,15 @@ class Teamspeak3Manager:
+         except TeamspeakError as e:
+             if not e.code == '1281':
+                 raise e
++        logger.info("did not find user by custom field, trying by name {}".format(uid))
++        try:
++            ret = self.server.send_command('clientdbfind', {'pattern': uid})
++            if ret and 'keys' in ret and 'cldbid' in ret['keys']:
++                logger.debug("Got userid {} for uid {} by name".format(ret['keys']['cldbid'], uid))
++                return ret['keys']['cldbid']
++        except TeamspeakError as e:
++            if not e.code == '1281':
++                raise e
+         return None
+
+     def _group_id_by_name(self, groupname):

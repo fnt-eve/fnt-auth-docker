@@ -44,7 +44,7 @@ RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings allianceau
 RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
 
 COPY patches ${AUTH_HOME}
-RUN cat 0001-skip-email-step.patch | patch -d $AA_PACKAGE_PATH/authentication
+RUN find ${AUTH_HOME}/ -type f -name "*.patch" -exec sh -c "cat "{}" | patch -p2 -d $AA_PACKAGE_PATH" \;
 
 # Initialize auth
 RUN allianceauth start myauth
