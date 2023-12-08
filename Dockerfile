@@ -37,7 +37,7 @@ WORKDIR ${AUTH_HOME}
 RUN pip install --upgrade pip
 RUN pip install wheel gunicorn
 RUN pip install allianceauth==${AA_VERSION}
-ENV AA_PACKAGE_PATH="$VIRTUAL_ENV/lib/python3.10/site-packages/allianceauth/"
+ENV SITE_PACKAGES_PATH="$VIRTUAL_ENV/lib/python3.10/site-packages/"
 
 # Install AA extension apps
 RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
@@ -46,7 +46,7 @@ RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
 RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
 
 COPY patches ${AUTH_HOME}
-RUN find ${AUTH_HOME}/ -type f -name "*.patch" -exec sh -c "cat "{}" | patch -p2 -d $AA_PACKAGE_PATH" \;
+RUN find ${AUTH_HOME}/ -type f -name "*.patch" -exec sh -c "cat "{}" | patch -p1 -d $SITE_PACKAGES_PATH" \;
 
 # Initialize auth
 RUN allianceauth start myauth
