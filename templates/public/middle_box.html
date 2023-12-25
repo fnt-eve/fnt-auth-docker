@@ -1,0 +1,43 @@
+{% extends 'public/base.html' %}
+
+{% load i18n %}
+
+{% block content %}
+    <div class="col-md-4 col-md-offset-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.level_tag}}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="panel panel-default panel-transparent">
+            <div class="panel-body">
+                <img src="{% static 'allianceauth/authentication/img/fnt_logo.jpg' %}" width="100%">
+                <div class="col-md-12">
+                    {% block middle_box_content %}
+                    {% endblock %}
+                </div>
+            </div>
+
+            {% include 'public/lang_select.html' %}
+
+            <p class="text-center" style="margin-top: 2rem;">
+                {% translate "For information on SSO, ESI and security read the CCP Dev Blog" %}<br>
+                <a href="https://www.eveonline.com/article/introducing-esi" target="_blank" rel="noopener noreferrer">
+                    {% translate "Introducing ESI - A New API For Eve Online" %}
+                </a>
+            </p>
+
+            <p class="text-center">
+                <a href="https://community.eveonline.com/support/third-party-applications/" target="_blank" rel="noopener noreferrer">
+                    {% translate "Manage ESI Applications" %}
+                </a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_include %}
+    {% include 'bundles/bootstrap-js.html' %}
+{% endblock %}
+
