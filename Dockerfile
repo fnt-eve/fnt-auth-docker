@@ -53,6 +53,20 @@ RUN allianceauth start myauth
 RUN allianceauth update myauth
 RUN mkdir -p ${STATIC_BASE}/myauth/static
 
+# Switch to root
+USER root
+
+# Copy static
+COPY static/ $AUTH_HOME/myauth/myauth/static/
+RUN chown -R ${AUTH_USERGROUP} $AUTH_HOME/myauth/myauth/static/
+
+# Copy custom templates
+COPY templates/ $AUTH_HOME/myauth/myauth/templates/
+RUN chown -R ${AUTH_USERGROUP} $AUTH_HOME/myauth/myauth/templates/
+
+# Switch to non-root user
+USER ${AUTH_USER}
+
 COPY /conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN echo 'alias auth="python $AUTH_HOME/myauth/manage.py"' >> ~/.bashrc && \
     echo 'alias supervisord="supervisord -c /etc/supervisor/conf.d/supervisord.conf"' >> ~/.bashrc && \
