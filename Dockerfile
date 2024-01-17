@@ -42,7 +42,8 @@ ENV SITE_PACKAGES_PATH="$VIRTUAL_ENV/lib/python3.10/site-packages/"
 # Install AA extension apps
 RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
                 allianceauth-securegroups aa-esi-status fittings \
-                django-eveuniverse aa-structures  allianceauth-afat
+                django-eveuniverse aa-structures  allianceauth-afat \
+                aa-moonmining
 RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
 
 COPY patches ${AUTH_HOME}
