@@ -1,17 +1,25 @@
 diff --git a/allianceauth/services/modules/teamspeak3/manager.py b/allianceauth/services/modules/teamspeak3/manager.py
-index 519a8a47..d094b098 100644
+index 519a8a47..c97cdf87 100644
 --- a/allianceauth/services/modules/teamspeak3/manager.py
 +++ b/allianceauth/services/modules/teamspeak3/manager.py
-@@ -61,6 +61,15 @@ class Teamspeak3Manager:
+@@ -61,6 +61,23 @@ class Teamspeak3Manager:
          except TeamspeakError as e:
              if not e.code == '1281':
                  raise e
 +        logger.info("did not find user by custom field, trying by name {}".format(uid))
 +        try:
-+            ret = self.server.send_command('clientdbfind', {'pattern': uid})
-+            if ret and 'keys' in ret and 'cldbid' in ret['keys']:
-+                logger.debug("Got userid {} for uid {} by name".format(ret['keys']['cldbid'], uid))
-+                return ret['keys']['cldbid']
++            client_find = self.server.send_command('clientfind', {'pattern': uid})
++            if client_find and 'keys' in client_find and 'clid' in client_find['keys']:
++                clid = client_find['keys']['clid']
++                logger.debug("Got clid {} for uid {} by name".format(clid, uid))
++                ret = self.server.send_command('clientinfo', {'clid': clid})
++                if ret and 'keys' in ret and 'client_database_id' in ret['keys']:
++                    client_database_id = ret['keys']['client_database_id']
++                    logger.debug("Got client_database_id {} for uid {} by name".format(client_database_id, uid))
++                    return client_database_id
++                logger.warning("failed to find teamspeak database client for uid {} by name".format(uid))
++            else:
++                logger.warning("failed to find teamspeak client for uid {} by name".format(uid))
 +        except TeamspeakError as e:
 +            if not e.code == '1281':
 +                raise e
