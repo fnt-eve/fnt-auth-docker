@@ -1,5 +1,5 @@
-FROM python:3.10-slim
-ARG AA_VERSION=3.8.0
+FROM python:3.11-slim
+ARG AA_VERSION=3.8.1
 ENV VIRTUAL_ENV=/opt/venv
 ENV AUTH_USER=allianceserver
 ENV AUTH_GROUP=allianceserver
@@ -37,14 +37,14 @@ WORKDIR ${AUTH_HOME}
 RUN pip install --upgrade pip
 RUN pip install wheel gunicorn
 RUN pip install allianceauth==${AA_VERSION}
-ENV SITE_PACKAGES_PATH="$VIRTUAL_ENV/lib/python3.10/site-packages/"
+ENV SITE_PACKAGES_PATH="$VIRTUAL_ENV/lib/python3.11/site-packages/"
 
 # Install AA extension apps
 RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
                 allianceauth-securegroups aa-esi-status fittings \
                 django-eveuniverse aa-structures  allianceauth-afat \
                 aa-moonmining aa-charlink aa-taskmonitor discordproxy \
-                aa-discordnotify ts3
+                aa-discordnotify ts3 aa-srp aa-structuretimers aa-package-monitor
 RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
 
 COPY patches ${AUTH_HOME}
