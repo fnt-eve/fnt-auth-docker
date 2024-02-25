@@ -35,7 +35,7 @@ WORKDIR ${AUTH_HOME}
 
 # Install python dependencies
 RUN pip install --upgrade pip
-RUN pip install wheel gunicorn flower
+RUN pip install wheel gunicorn flower gevent
 RUN pip install allianceauth==${AA_VERSION}
 ENV SITE_PACKAGES_PATH="$VIRTUAL_ENV/lib/python3.11/site-packages/"
 
