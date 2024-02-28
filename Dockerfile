@@ -44,7 +44,8 @@ RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
                 allianceauth-securegroups aa-esi-status fittings \
                 django-eveuniverse aa-structures  allianceauth-afat \
                 aa-moonmining aa-charlink aa-taskmonitor discordproxy \
-                aa-discordnotify ts3 aa-srp aa-structuretimers aa-package-monitor
+                aa-discordnotify ts3 aa-srp aa-structuretimers aa-package-monitor \
+                allianceauth-oidc-provider
 RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
 
 COPY patches ${AUTH_HOME}

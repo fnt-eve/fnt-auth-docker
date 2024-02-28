@@ -1,13 +1,20 @@
 diff --git a/allianceauth/authentication/views.py b/allianceauth/authentication/views.py
-index c5c036bf..f1e99987 100644
+index c5c036bf..4983bc8b 100644
 --- a/allianceauth/authentication/views.py
 +++ b/allianceauth/authentication/views.py
-@@ -172,7 +172,7 @@ def sso_login(request, token):
-             # Go to Step 2
-             return redirect('registration_register')
+@@ -167,10 +167,11 @@ def sso_login(request, token):
+             login(request, user)
+             return redirect(request.POST.get('next', request.GET.get('next', 'authentication:dashboard')))
+         elif not user.email:
+-            # Store the new user PK in the session to enable us to identify the registering user in Step 2
+-            request.session['registration_uid'] = user.pk
+-            # Go to Step 2
+-            return redirect('registration_register')
++            user.is_active = True
++            user.email = "fake-email@fnt.services"
++            user.save()
++            login(request, user, 'allianceauth.authentication.backends.StateBackend')
++            return redirect(request.POST.get('next', request.GET.get('next', 'authentication:dashboard')))
      # Logging in with an alt is not allowed due to security concerns.
--    token.delete()
-+#    token.delete()
+     token.delete()
      messages.error(
-         request,
-         _('Unable to authenticate as the selected character. '
