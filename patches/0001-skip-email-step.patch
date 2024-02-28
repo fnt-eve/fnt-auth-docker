@@ -1,5 +1,5 @@
 diff --git a/allianceauth/authentication/views.py b/allianceauth/authentication/views.py
-index c5c036bf..4983bc8b 100644
+index c5c036bf..d75761c9 100644
 --- a/allianceauth/authentication/views.py
 +++ b/allianceauth/authentication/views.py
 @@ -167,10 +167,11 @@ def sso_login(request, token):
@@ -11,7 +11,7 @@ index c5c036bf..4983bc8b 100644
 -            # Go to Step 2
 -            return redirect('registration_register')
 +            user.is_active = True
-+            user.email = "fake-email@fnt.services"
++            user.email = f"{user.get_username()}@fnt.services"
 +            user.save()
 +            login(request, user, 'allianceauth.authentication.backends.StateBackend')
 +            return redirect(request.POST.get('next', request.GET.get('next', 'authentication:dashboard')))
