@@ -48,7 +48,7 @@ RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
 RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
 
 COPY patches ${AUTH_HOME}
-RUN find ${AUTH_HOME}/ -type f -name "*.patch" -exec sh -c "cat "{}" | patch -p1 -d $SITE_PACKAGES_PATH" \;
+RUN for i in ${AUTH_HOME}/*.patch; do patch -p1 -d "$SITE_PACKAGES_PATH" < $i || exit 1; done
 
 # Initialize auth
 RUN allianceauth start myauth
