@@ -1,5 +1,5 @@
 diff --git a/allianceauth/authentication/views.py b/allianceauth/authentication/views.py
-index 15c746c7..5cde8a79 100644
+index c5c036bf..4983bc8b 100644
 --- a/allianceauth/authentication/views.py
 +++ b/allianceauth/authentication/views.py
 @@ -167,10 +167,11 @@ def sso_login(request, token):
@@ -14,6 +14,7 @@ index 15c746c7..5cde8a79 100644
 +            user.email = "fake-email@fnt.services"
 +            user.save()
 +            login(request, user, 'allianceauth.authentication.backends.StateBackend')
-+            return redirect("authentication:dashboard")
-     messages.error(request, _('Unable to authenticate as the selected character.'))
-     return redirect(settings.LOGIN_URL)
++            return redirect(request.POST.get('next', request.GET.get('next', 'authentication:dashboard')))
+     # Logging in with an alt is not allowed due to security concerns.
+     token.delete()
+     messages.error(
