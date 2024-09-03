@@ -1,5 +1,5 @@
 FROM python:3.11-slim
-ARG AA_VERSION=4.1.0
+ARG AA_VERSION=4.2.2
 ENV VIRTUAL_ENV=/opt/venv
 ENV AUTH_USER=allianceserver
 ENV AUTH_GROUP=allianceserver
@@ -45,7 +45,7 @@ RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
                 django-eveuniverse aa-structures  allianceauth-afat \
                 aa-moonmining aa-charlink aa-taskmonitor discordproxy \
                 aa-discordnotify ts3 aa-srp aa-structuretimers aa-package-monitor \
-                allianceauth-oidc-provider
+                allianceauth-oidc-provider allianceauth-invoices
 RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
 
 COPY patches ${AUTH_HOME}
