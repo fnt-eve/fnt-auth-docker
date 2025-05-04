@@ -45,9 +45,9 @@ RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
                 django-eveuniverse aa-structures  allianceauth-afat \
                 aa-moonmining aa-charlink aa-taskmonitor discordproxy \
                 aa-discordnotify ts3 aa-srp aa-structuretimers aa-package-monitor \
-                allianceauth-oidc-provider allianceauth-invoices
+                allianceauth-invoices
 RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
-RUN pip install -U git+https://github.com/fnt-eve/django-oidc-provider
+RUN pip install -U git+https://github.com/fnt-eve/allianceauth-oidc-provider
 
 COPY patches ${AUTH_HOME}
 RUN for i in ${AUTH_HOME}/*.patch; do patch -p1 -d "$SITE_PACKAGES_PATH" < $i || exit 1; done
