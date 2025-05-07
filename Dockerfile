@@ -45,7 +45,7 @@ RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
                 django-eveuniverse aa-structures  allianceauth-afat \
                 aa-moonmining aa-charlink aa-taskmonitor discordproxy \
                 aa-discordnotify ts3 aa-srp aa-structuretimers aa-package-monitor \
-                allianceauth-invoices pyjwt
+                allianceauth-invoices pyjwt django-cors-headers
 RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
 RUN pip install -U git+https://github.com/fnt-eve/allianceauth-oidc-provider
 
