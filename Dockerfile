@@ -1,5 +1,5 @@
-FROM python:3.11-slim
-ARG AA_VERSION=4.8.0
+FROM python:3.12-slim
+ARG AA_VERSION=4.13.1
 ENV VIRTUAL_ENV=/opt/venv
 ENV AUTH_USER=allianceserver
 ENV AUTH_GROUP=allianceserver
