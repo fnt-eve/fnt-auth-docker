@@ -37,7 +37,7 @@ WORKDIR ${AUTH_HOME}
 RUN pip install --upgrade pip
 RUN pip install wheel gunicorn flower gevent
 RUN pip install allianceauth==${AA_VERSION}
-ENV SITE_PACKAGES_PATH="$VIRTUAL_ENV/lib/python3.11/site-packages/"
+ENV SITE_PACKAGES_PATH="$VIRTUAL_ENV/lib/python3.12/site-packages/"
 
 # Install AA extension apps
 RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
