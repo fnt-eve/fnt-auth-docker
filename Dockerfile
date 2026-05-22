@@ -20,7 +20,8 @@ RUN mkdir -p ${VIRTUAL_ENV} \
 
 # Install build dependencies
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
-    libmariadb-dev gcc supervisor git htop pkg-config
+    libmariadb-dev gcc supervisor git htop pkg-config \
+    libffi-dev libnacl-dev python3-dev
 
 # Copy migrate script
 COPY migrate.sh $AUTH_HOME
@@ -45,7 +46,7 @@ RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
                 django-eveuniverse aa-structures  allianceauth-afat \
                 aa-moonmining aa-charlink aa-taskmonitor discordproxy \
                 aa-discordnotify ts3 aa-srp aa-structuretimers aa-package-monitor \
-                allianceauth-invoices pyjwt django-cors-headers py-cord django-eveonline-sde
+                allianceauth-invoices pyjwt django-cors-headers py-cord py-cord[voice] django-eveonline-sde
 RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
 RUN pip install -U git+https://github.com/fnt-eve/allianceauth-oidc-provider
 
