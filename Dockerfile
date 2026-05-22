@@ -1,4 +1,4 @@
-FROM python:3.14-slim
+FROM python:3.12-slim
 ARG AA_VERSION=4.13.1
 ARG AA_CHARLINK_VERSION=1.13.0
 ENV VIRTUAL_ENV=/opt/venv
