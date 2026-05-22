@@ -1,5 +1,6 @@
-FROM python:3.12-slim
+FROM python:3.14-slim
 ARG AA_VERSION=4.13.1
+ARG AA_CHARLINK_VERSION=1.13.0
 ENV VIRTUAL_ENV=/opt/venv
 ENV AUTH_USER=allianceserver
 ENV AUTH_GROUP=allianceserver
@@ -38,13 +39,13 @@ WORKDIR ${AUTH_HOME}
 RUN pip install --upgrade pip
 RUN pip install wheel gunicorn flower gevent
 RUN pip install allianceauth==${AA_VERSION}
-ENV SITE_PACKAGES_PATH="$VIRTUAL_ENV/lib/python3.12/site-packages/"
+ENV SITE_PACKAGES_PATH="$VIRTUAL_ENV/lib/python3.14/site-packages/"
 
 # Install AA extension apps
 RUN pip install aa-freight aa-corpstats-two allianceauth-signal-pings \
                 allianceauth-securegroups aa-esi-status fittings \
                 django-eveuniverse aa-structures  allianceauth-afat \
-                aa-moonmining aa-charlink aa-taskmonitor discordproxy \
+                aa-moonmining aa-charlink==${AA_CHARLINK_VERSION} aa-taskmonitor discordproxy \
                 aa-discordnotify ts3 aa-srp aa-structuretimers aa-package-monitor \
                 allianceauth-invoices pyjwt django-cors-headers py-cord py-cord[voice] django-eveonline-sde
 RUN pip install -U git+https://github.com/pvyParts/allianceauth-corp-tools.git
