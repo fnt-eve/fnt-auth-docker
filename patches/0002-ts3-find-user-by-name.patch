@@ -1,35 +1,60 @@
-diff --git a/allianceauth/services/modules/teamspeak3/forms.py b/allianceauth/services/modules/teamspeak3/forms.py
-index 1ef735ae..01acca9c 100644
 --- a/allianceauth/services/modules/teamspeak3/forms.py
 +++ b/allianceauth/services/modules/teamspeak3/forms.py
-@@ -11,4 +11,7 @@ class TeamspeakJoinForm(forms.Form):
-         with Teamspeak3Manager() as ts3man:
-             if ts3man._get_userid(self.cleaned_data['username']):
-                 return self.cleaned_data
-+            elif ts3man.set_customdata(self.cleaned_data['username']):
-+                return self.cleaned_data
+@@ -1,16 +1,28 @@
++import logging
+ from typing import Any
+ 
+ from django import forms
+ from django.utils.translation import gettext_lazy as _
+ 
+ from .manager import Teamspeak3Manager
++from .util.ts3 import ConnectionError as TS3ConnectionError
++
++
++logger = logging.getLogger(__name__)
+ 
+ 
+ class TeamspeakJoinForm(forms.Form):
+     username = forms.CharField(widget=forms.HiddenInput())
+ 
+     def clean(self) -> dict[str, Any]:
+-        with Teamspeak3Manager() as ts3man:
+-            if ts3man._get_userid(self.cleaned_data['username']):
+-                return self.cleaned_data
++        try:
++            with Teamspeak3Manager() as ts3man:
++                if ts3man._get_userid(self.cleaned_data['username']):
++                    return self.cleaned_data
++                elif ts3man.set_customdata(self.cleaned_data['username']):
++                    return self.cleaned_data
++        except TS3ConnectionError as err:
++            logger.warning(f'Unable to reach the TeamSpeak server: {err}')
++            raise forms.ValidationError(_("Unable to reach the TeamSpeak server. Try again later."))
 +
          raise forms.ValidationError(_("Unable to locate user %s on server") % self.cleaned_data['username'])
-diff --git a/allianceauth/services/modules/teamspeak3/manager.py b/allianceauth/services/modules/teamspeak3/manager.py
-index 519a8a47..6253c5c3 100644
 --- a/allianceauth/services/modules/teamspeak3/manager.py
 +++ b/allianceauth/services/modules/teamspeak3/manager.py
-@@ -5,6 +5,8 @@ from django.conf import settings
- from .util.ts3 import TS3Server, TeamspeakError
+@@ -9,6 +9,7 @@
+ 
  from .models import TSgroup
- from allianceauth.groupmanagement.models import ReservedGroupName
-+import ts3
-+import ts3.definitions
-
- logger = logging.getLogger(__name__)
-
-@@ -243,6 +245,62 @@ class Teamspeak3Manager:
-
+ from .util.ts3 import TeamspeakError, TS3Server
++import ts3.query
+ 
+ if TYPE_CHECKING:
+     from types import TracebackType
+@@ -254,6 +255,72 @@
+ 
          return False
-
+ 
 +    def set_customdata(self, uid):
 +        logger.debug(f"Setting customdata for {uid}")
-+        with ts3.query.TS3Connection(settings.TEAMSPEAK3_SERVER_IP, settings.TEAMSPEAK3_SERVER_PORT) as ts3conn:
++        try:
++            ts3conn = ts3.query.TS3Connection(settings.TEAMSPEAK3_SERVER_IP, settings.TEAMSPEAK3_SERVER_PORT)
++        except (OSError, EOFError) as err:
++            logger.warning(f'Unable to connect to TeamSpeak server: {err}')
++            return False
++
++        with ts3conn:
 +            try:
 +                ts3conn.login(client_login_name=settings.TEAMSPEAK3_SERVERQUERY_USER, client_login_password=settings.TEAMSPEAK3_SERVERQUERY_PASSWORD)
 +                ts3conn.use(sid=settings.TEAMSPEAK3_VIRTUAL_SERVER)
@@ -38,7 +63,10 @@ index 519a8a47..6253c5c3 100644
 +                    clients = ts3conn.clientfind(pattern=uid)
 +                    if not clients:
 +                        return False
-+                    clients = [client["clid"] for client in clients]
++                    clients = [client for client in clients if client["client_nickname"] == uid]
++                    if len(clients) != 1:
++                        logger.warning(f'Found {len(clients)} exact name matches for uid {uid}')
++                        return False
 +                except ts3.query.TS3QueryError as err:
 +                    if err.resp.error["id"] == '512': # not found
 +                        logger.warning(f'Not found user for uid {uid}')
@@ -46,7 +74,7 @@ index 519a8a47..6253c5c3 100644
 +                    else:
 +                        raise err
 +
-+                clid = clients[0]
++                clid = clients[0]["clid"]
 +                logger.debug(f'Found clid {clid} for uid {uid}')
 +
 +                client_info = ts3conn.clientinfo(clid=clid)
@@ -61,9 +89,10 @@ index 519a8a47..6253c5c3 100644
 +                    customdata = ts3conn.custominfo(cldbid=cldbid)
 +                    for entry in customdata:
 +                        if entry['ident'] == 'sso_uid' and 'value' in entry:
-+                            logging.warning(f'custom data sso_uid already set to {entry["value"]} for uid {uid}')
++                            logger.warning(f'custom data sso_uid already set to {entry["value"]} for uid {uid}')
 +                            return False
 +                except ts3.query.TS3QueryError as err:
++                    # 1281: the client has no custom field yet, so nothing blocks the set.
 +                    if err.resp.error["id"] == '1281':
 +                        pass
 +                    else:
@@ -83,6 +112,6 @@ index 519a8a47..6253c5c3 100644
 +                logger.error(f'error while setting customdata: {err}')
 +                return False
 +
-     def generate_new_permissionkey(self, uid, user, username):
-         logger.debug("Re-issuing permission key for user id %s" % uid)
+     def generate_new_permissionkey(self, uid: str, user: "User", username: str) -> tuple[str, str]:
+         logger.debug(f"Re-issuing permission key for user id {uid}")
          self.delete_user(uid)
