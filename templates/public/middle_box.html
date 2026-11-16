@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="row justify-content-center">
-        <div class="col-sm-10 col-md-8 col-lg-6">
+        <div class="col-12" style="max-width: 440px;">
             {% if messages %}
                 {% for message in messages %}
                     <div class="alert alert-{{ message.level_tag }}">{{ message }}</div>
@@ -72,3 +72,9 @@
 {% block extra_include %}
     {% include 'bundles/bootstrap-js-bs5.html' %}
 {% endblock extra_include %}
+
+{% block extra_style %}
+    #lang-select {
+        width: auto;
+    }
+{% endblock extra_style %}
