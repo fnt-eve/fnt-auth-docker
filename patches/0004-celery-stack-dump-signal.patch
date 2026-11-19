@@ -1,0 +1,18 @@
+--- a/allianceauth/project_template/project_name/celery.py
++++ b/allianceauth/project_template/project_name/celery.py
+@@ -1,8 +1,15 @@
++import faulthandler
+ import os
++import signal
++import sys
+ 
+ from celery import Celery
+ from celery.app import trace
+ 
++# SIGUSR2 makes a Celery process print each OS thread's Python stack to stderr, also in a hang on
++# a lock. Suspended greenlets are not shown. A gunicorn master re-executes on SIGUSR2 instead.
++faulthandler.register(signal.SIGUSR2, file=sys.__stderr__, all_threads=True)
++
+ # set the default Django settings module for the 'celery' program.
+ os.environ.setdefault('DJANGO_SETTINGS_MODULE', '{{ project_name }}.settings.local')
+ 
