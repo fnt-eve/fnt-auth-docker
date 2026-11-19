@@ -1,0 +1,15 @@
+--- a/allianceauth/project_template/project_name/celery.py
++++ b/allianceauth/project_template/project_name/celery.py
+@@ -51,6 +51,12 @@
+     # Utilize a single threaded worker to process these tasks
+     # Discord: Multithreads can cause duplicate role creation.
+     "discord.*": {"queue": "services"},
++    # One solo worker runs these one at a time. On the gevent workers a run starts hundreds at
++    # once, each holding a database connection, and the database refuses the rest.
++    "teamspeak3.update_groups": {"queue": "high_cpu"},
++    "teamspeak3.update_all_groups": {"queue": "high_cpu"},
++    "allianceauth.authentication.tasks.check_character_ownership": {"queue": "high_cpu"},
++    "allianceauth.authentication.tasks.check_all_character_ownership": {"queue": "high_cpu"},
+ }
+ 
+ # Load task modules from all registered Django app configs.
