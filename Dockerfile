@@ -8,6 +8,10 @@ ENV AUTH_USERGROUP=${AUTH_USER}:${AUTH_GROUP}
 ENV STATIC_BASE=/var/www
 ENV AUTH_HOME=/home/allianceserver
 
+# gevent's thread-pool resolver can deadlock a worker when a lookup runs during garbage collection.
+# c-ares needs no thread pool. The bundled c-ares 1.34.5 has open advisories, fixed in 1.34.9.
+ENV GEVENT_RESOLVER=ares
+
 # Setup user and directory permissions
 SHELL ["/bin/bash", "-c"]
 RUN groupadd -g 61000 ${AUTH_GROUP}
